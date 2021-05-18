@@ -32,7 +32,7 @@ This project is intended to serve as a lightweight, all-purpose research lab for
 ## Project Directory
 
 
-Repository Structure (adapted from [Cookiecutter Data Science](https://drivendata.github.io/cookiecutter-data-science/)
+Repository Structure (adapted from [Cookiecutter Data Science](https://drivendata.github.io/cookiecutter-data-science/))
 
 ```
 grt-strategy-lab/
