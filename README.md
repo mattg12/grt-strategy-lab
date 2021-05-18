@@ -11,10 +11,10 @@ This project is intended to serve as a lightweight, all-purpose research lab for
 1. [Getting Started](#getting-started)
 2. [Directory](#project-directory)
 3. [About the Author](#about-the-author)
-4. [Acknowledgements](#acknowledgements)
+4. [Acknowledgments](#acknowledgments)
 5. [Resources](#resources)
 
-## 1. Getting Started
+## Getting Started
 
 ### Dependencies & Prerequisites
 
@@ -29,7 +29,7 @@ This project is intended to serve as a lightweight, all-purpose research lab for
 * Full installation instructions to be added at a later date
 * You will need your own API Keys (or alternate data sources) for any data used
 
-## 2. Project Directory
+## Project Directory
 
 
 Repository Structure (adapted from [Cookiecutter Data Science](https://drivendata.github.io/cookiecutter-data-science/)
@@ -78,7 +78,7 @@ grt-strategy-lab/
         └── visualize.py
 ```  
 
-## 3. About the Author
+## About the Author
 
 [Matthew Garton](https://www.linkedin.com/in/matt-garton/) is a quantitative trader with over 8 years of experience in financial markets as an options market maker, a buy side trader, and more recently as an independent trader and researcher. His primary areas of interest for research include volatility, options strategies, and commodities.
 
