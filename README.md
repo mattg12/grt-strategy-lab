@@ -8,11 +8,11 @@ This project is intended to serve as a lightweight, all-purpose research lab for
 
 ## Table of Contents
 
-1. Getting Started
-2. Directory
-3. About the Author
-4. Acknowledgements
-5. Resources
+1. [Getting Started](#getting-started)
+2. [Directory](#project-directory)
+3. [About the Author](#about-the-author)
+4. [Acknowledgements](#acknowledgements)
+5. [Resources](#resources)
 
 ## 1. Getting Started
 
@@ -33,6 +33,8 @@ This project is intended to serve as a lightweight, all-purpose research lab for
 
 
 Repository Structure (adapted from [Cookiecutter Data Science](https://drivendata.github.io/cookiecutter-data-science/)
+
+```
 grt-strategy-lab/
 ├── README.md          
 ├── data/
@@ -74,13 +76,15 @@ grt-strategy-lab/
     │
     └── visualization/ 
         └── visualize.py
-  
+```  
 
 ## 3. About the Author
 
-[Matthew Garton](matthew.garton@gartonresearch.com) is a quantitative trader with over 8 years of experience in financial markets as an options market maker, a buy side trader, and more recently as an independent trader and researcher. His primary areas of interest for research include volatility, options strategies, and commodities.
+[Matthew Garton](https://www.linkedin.com/in/matt-garton/) is a quantitative trader with over 8 years of experience in financial markets as an options market maker, a buy side trader, and more recently as an independent trader and researcher. His primary areas of interest for research include volatility, options strategies, and commodities.
 
 
 ## Acknowledgments
 
 TBD
+
+## Resources
