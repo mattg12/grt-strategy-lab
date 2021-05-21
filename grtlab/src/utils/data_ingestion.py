@@ -8,6 +8,8 @@ Helper functions for assembling dataset to be used in algorithms
 
 Author: Matthew Garton
 """
+import os
+from alpha_vantage.timeseries import TimeSeries
 
 def get_stock_prices(
         symbol, 
@@ -24,7 +26,7 @@ def get_stock_prices(
     universe : str
         Ticker or list of tickers to return price data for.
     freq : str, optional
-        DESCRIPTION. The default is 'Daily'.
+        Frequency of data to return. The default is 'Daily'.
     start_time : date, optional
         Earliest timestamp to return. The default is None. Default behaviour
         will return the earliest available data
@@ -43,11 +45,32 @@ def get_stock_prices(
     """
     
     if source=='av':
-        pass
-    elif source=='iex':
-        pass
+        # instantiate a TimeSeries object to make calls for ts data
+        ts = TimeSeries(
+            key=os.getenv('ALPHAVANTAGE_API_KEY'), 
+            output_format='pandas'
+            )
         
-    return None
+        # request data at desired frequency
+        # TODO: implement methods for other frequencies
+        data, meta = ts.get_daily(symbol, outputsize='full')
+        
+        # rename av's format to standard
+        # TODO: add documentation explaining standard data format
+        data.rename(
+            columns={
+                '1. open': 'open',
+                '2. high': 'high',
+                '3. low': 'low',
+                '4. close': 'close',
+                '5. volume': 'volume'
+                },
+            inplace=True
+            )
+    elif source=='iex':
+        raise NotImplementedError('IEX functionality is not set up. Use another source')
+        
+    return data
 
 
 def get_futures_prices(
