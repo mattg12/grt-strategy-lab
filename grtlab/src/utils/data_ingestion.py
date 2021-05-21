@@ -11,6 +11,7 @@ Author: Matthew Garton
 import os
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.foreignexchange import ForeignExchange
+from alpha_vantage.cryptocurrencies import CryptoCurrencies
 
 def get_stock_prices(
         symbol, 
@@ -20,7 +21,8 @@ def get_stock_prices(
         end_time=None, 
         ):
     """
-    Wrapper function for retrieving stock price data from various APIs
+    Wrapper function for retrieving stock price data from various APIs. Only
+    split/dividend adjusted data is supported.
     
     Parameters
     ----------
@@ -30,10 +32,11 @@ def get_stock_prices(
         Frequency of data to return. The default is 'Daily'.
     start_time : date, optional
         Earliest timestamp to return. The default is None. Default behaviour
-        will return the earliest available data
+        will return the full dataset for Daily, or the most recent 1-2 mo
+        for intraday
     end_time : date, optional
-        Most recent start time to return. The default is None. Default behaviour
-        returns up to the most recent datapoint
+        Last timestamp to return. The default is None. Default behaviour
+        returns the full dataset for Daily, or most recent 1-2 mo for intraday
     source : str
         Source to pull data from. Supported sources for now are:
         - 'iex' for IEX Cloud
@@ -45,6 +48,7 @@ def get_stock_prices(
     """
     
     if source == 'av':
+        
         # instantiate a TimeSeries object to make calls for ts data
         ts = TimeSeries(
             key=os.getenv('ALPHAVANTAGE_API_KEY'), 
@@ -53,8 +57,17 @@ def get_stock_prices(
         
         # request data at desired frequency
         # TODO: implement methods for other frequencies
-        data, meta = ts.get_daily(symbol, outputsize='full')
-        
+        if freq == 'Daily':
+            data, meta = ts.get_daily_adjusted(symbol, outputsize='full')
+        elif (start_time == None) & (end_time == None):
+            data, meta = ts.get_intraday(
+                symbol,
+                interval=freq,
+                outputsize='full'
+                )
+        else:
+            raise NotImplementedError('Extended Intraday not supported yet')
+            
         # data must be sorted ascending by date
         data.sort_index(ascending=True, inplace=True)
         
@@ -145,8 +158,16 @@ def get_forex_prices(
             key=os.getenv('ALPHAVANTAGE_API_KEY'),
             output_format='pandas'
             )
-        data, meta = fx.get_currency_exchange_daily(price, base)
         
+        if freq == 'Daily':
+            data, meta = fx.get_currency_exchange_daily(price, base)
+        else:
+            data, meta = fx.get_currency_exchange_intraday(
+                price,
+                base,
+                interval=freq,
+                outputsize='full'
+                )
         # data must be sorted ascending by date
         data.sort_index(ascending=True, inplace=True)
         
@@ -163,6 +184,58 @@ def get_forex_prices(
             )
     return data
     
+
+def get_crypto_prices(
+        symbol,
+        market,
+        source,
+        freq='Daily',
+        start_date=None,
+        end_date=None
+        ):
+    """
+    Wrapper function for retrieving historical cryptocurrency prices from 
+    various APIs
+
+    Parameters
+    ----------
+    symbol : str
+        cryptocurrency for which you want prices
+    market : str
+        market for which you want crypto prices (ie the 'base' currency)
+    source : str
+        source for retrieving the data; defaults to 'av'
+    freq : str, default 'Daily'
+        frequency of data; defaults to daily
+    start_date : datetime, default None
+        earliest date to pull prices; if None returns the full dataset
+    end_date : datetime, default None
+        last date to pull prices; if None then return the full dataset
+
+    Returns
+    -------
+    Historical forex data in standardized dataframe format
+
+    """
+    
+    if source == 'av':
+        cc = CryptoCurrencies(
+            key=os.getenv('ALPHAVANTAGE_API_KEY'),
+            output_format='pandas'
+            )
+        
+        if freq == 'Daily':
+            data, meta = cc.get_digital_currency_daily(symbol, market)
+        else:
+            raise NotImplementedError('Intraday crypto not supported from AV')
+        # data must be sorted ascending by date
+        data.sort_index(ascending=True, inplace=True)
+        
+        # rename av's format to standard
+        # TODO: add documentation explaining standard data format
+        # TODO: figure out and implement column renaming for cryptos
+    return data
+
 
 def get_option_prices(
         contract,
