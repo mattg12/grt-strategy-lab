@@ -10,6 +10,7 @@ Author: Matthew Garton
 """
 import os
 from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.foreignexchange import ForeignExchange
 
 def get_stock_prices(
         symbol, 
@@ -40,11 +41,10 @@ def get_stock_prices(
 
     Returns
     -------
-    Historical stock price data in the format specified by the data provider.
-    See relevant provider's API documentation for details on output format.
+    Historical stock price data in standardized dataframe format
     """
     
-    if source=='av':
+    if source == 'av':
         # instantiate a TimeSeries object to make calls for ts data
         ts = TimeSeries(
             key=os.getenv('ALPHAVANTAGE_API_KEY'), 
@@ -54,6 +54,9 @@ def get_stock_prices(
         # request data at desired frequency
         # TODO: implement methods for other frequencies
         data, meta = ts.get_daily(symbol, outputsize='full')
+        
+        # data must be sorted ascending by date
+        data.sort_index(ascending=True, inplace=True)
         
         # rename av's format to standard
         # TODO: add documentation explaining standard data format
@@ -67,7 +70,7 @@ def get_stock_prices(
                 },
             inplace=True
             )
-    elif source=='iex':
+    elif source == 'iex':
         raise NotImplementedError('IEX functionality is not set up. Use another source')
         
     return data
@@ -106,35 +109,59 @@ def get_futures_prices(
 def get_forex_prices(
         base,
         price,
-        tenor,
-        start_date,
-        end_date,
-        source
+        source,
+        freq='Daily',
+        start_date=None,
+        end_date=None
         ):
     """
     Wrapper function for retrieving historical forex prices from various APIs
 
     Parameters
     ----------
-    base : TYPE
-        DESCRIPTION.
-    price : TYPE
-        DESCRIPTION.
-    tenor : TYPE
-        DESCRIPTION.
-    start_date : TYPE
-        DESCRIPTION.
-    end_date : TYPE
-        DESCRIPTION.
-     : TYPE
-        DESCRIPTION.
+    base : str
+        currency you are 'buying' or converting 'to'; 'to_currency' in the AV
+        framework
+    price : str
+        currency you are 'selling' or converting 'from'; 'from_currency' in
+        the AV framework
+    source : str
+        source for retrieving the data; defaults to 'av'
+    freq : str, default 'Daily'
+        frequency of data; defaults to daily
+    start_date : datetime, default None
+        earliest date to pull prices; if None returns the full dataset
+    end_date : datetime, default None
+        last date to pull prices; if None then return the full dataset
 
     Returns
     -------
-    None.
+    Historical forex data in standardized dataframe format
 
     """
-    return None
+    
+    if source == 'av':
+        fx = ForeignExchange(
+            key=os.getenv('ALPHAVANTAGE_API_KEY'),
+            output_format='pandas'
+            )
+        data, meta = fx.get_currency_exchange_daily(price, base)
+        
+        # data must be sorted ascending by date
+        data.sort_index(ascending=True, inplace=True)
+        
+        # rename av's format to standard
+        # TODO: add documentation explaining standard data format
+        data.rename(
+            columns={
+                '1. open': 'open',
+                '2. high': 'high',
+                '3. low': 'low',
+                '4. close': 'close'
+                },
+            inplace=True
+            )
+    return data
     
 
 def get_option_prices(
