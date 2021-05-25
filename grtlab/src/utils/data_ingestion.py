@@ -160,7 +160,10 @@ def get_forex_prices(
             )
         
         if freq == 'Daily':
-            data, meta = fx.get_currency_exchange_daily(price, base)
+            data, meta = fx.get_currency_exchange_daily(
+                price,
+                base,
+                outputsize='Full')
         else:
             data, meta = fx.get_currency_exchange_intraday(
                 price,
