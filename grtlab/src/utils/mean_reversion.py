@@ -10,6 +10,7 @@ implementations of such tests
 @author: Matthew Garton
 """
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 def generate_hurst_exponent(ts):
     """
@@ -48,3 +49,28 @@ def generate_hurst_exponent(ts):
     
     # return the Hurst exponent
     return poly[0]*2
+
+
+def compute_half_life(ts):
+    """
+    Function for computing the half-life of mean reversion
+
+    Parameters
+    ----------
+    ts : array-like
+        Time series data that we want the half-life of mean reversion for
+
+    Returns
+    -------
+    lam : float
+        lambda, or the half-life of mean reversion for an Ornstein-Uhlenbeck
+        process, expressed in units of the time series index
+
+    """
+    x = None
+    Y = None
+    lr = LinearRegression()
+    lr.fit(x, Y)
+    lam = None
+    return lam
+    
