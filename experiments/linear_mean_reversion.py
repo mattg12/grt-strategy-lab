@@ -4,15 +4,16 @@
 """
 linear_mean_reversion.py
 
-script for implementing a simple linear mean reverting strategy on a single asset
-strategy: set position equal to the negativa normalized deviation from its moving average
+script for implementing a simple linear mean reverting strategy on a single
+asset strategy: set position equal to the negative normalized deviation from
+its moving average
 
-credit: 'Algorithmic Trading: Winning Strategies and their Rationale' by Ernest P. Chan (2013)
+credit: 'Algorithmic Trading: Winning Strategies and their Rationale' by 
+Ernest P. Chan (2013)
+
 Author: Matthew Garton
 """
-import os
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from utils.data_ingestion import get_forex_prices
 from utils.mean_reversion import compute_half_life
@@ -35,13 +36,18 @@ backtest_data = usd_cad.loc[start_date: end_date]
 # TODO: write half life computation formula in utils
 
 # apply a simple linear mean reversion strategy to USDCAD
-lookback = compute_half_life(training_data)
-y = backtest_data['close']
+lookback = int(np.round(compute_half_life(training_data['close'])))
+y = backtest_data[['close']]
 
 # TODO: import or write methods to compute MA and MSTD
-portfolio_val = -(y - moving_avg(y, lookback)) / moving_std(y, lookback)
-pnl = None # TODO: method for computing strategy PnL
+position = - (y - y.rolling(lookback).mean()) / y.rolling(lookback).std()
+pnl = position.shift() * y.pct_change() # TODO: method for computing strategy PnL
+equity = np.cumsum(pnl)
+
+# TODO: write own methods for: strategy, position, p&L
 
 # view equity curve
-plt.plot(pnl)
+plt.plot(equity)
 plt.show()
+
+# TODO: method for tearsheet w/ backtest statistics

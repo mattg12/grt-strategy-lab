@@ -67,10 +67,10 @@ def compute_half_life(ts):
         process, expressed in units of the time series index
 
     """
-    x = None
-    Y = None
+    lags = np.roll(ts, 1)[1:]
+    X = lags.reshape(-1, 1)
+    y = ts.diff().dropna()
     lr = LinearRegression()
-    lr.fit(x, Y)
-    lam = None
-    return lam
+    lr.fit(X, y)
+    return -np.log(2)/lr.coef_[0]
     
